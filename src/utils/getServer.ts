@@ -28,6 +28,7 @@ export const getServer = async (serverId: any) => {
       .single();
 
     if (error) {
+        console.error('Database query failed', error);
       return {
         error: true,
         message: 'Database query failed',
@@ -36,6 +37,7 @@ export const getServer = async (serverId: any) => {
     }
 
     if (!data) {
+      console.error('Server not found');
       return { error: true, message: 'Server not found' };
     }
 
@@ -43,6 +45,7 @@ export const getServer = async (serverId: any) => {
       !data.user_mcp_server_tools ||
       data.user_mcp_server_tools.length === 0
     ) {
+      console.error('No tools configured for this server');
       return { error: true, message: 'No tools configured for this server' };
     }
 
@@ -52,6 +55,9 @@ export const getServer = async (serverId: any) => {
     mcpToolDataSchema = data.user_mcp_server_tools.map(
       (item: any) => item.user_tools.schema
     );
+
+    console.log('mcpToolData', mcpToolData);
+    console.log('mcpToolDataSchema', mcpToolDataSchema);
 
     return { data, mcpToolData, mcpToolDataSchema };
   } catch (error: any) {
