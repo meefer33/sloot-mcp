@@ -137,6 +137,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request: any) => {
 app.post('/mcp', async (req, res) => {
   // Check for existing session ID
   console.log('at the server post request')
+  console.log('req.body', req.body)
   const sessionId = req.headers['mcp-session-id'] as string | undefined;
   let transport: StreamableHTTPServerTransport;
 
