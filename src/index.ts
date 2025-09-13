@@ -6,10 +6,12 @@ import {
   CallToolRequestSchema, 
   ListToolsRequestSchema
 } from '@modelcontextprotocol/sdk/types.js';
+import cors from 'cors';
+import verifyJWT from './jwtAuth';
 
 const app = express();
 app.use(express.json());
-import cors from 'cors';
+
 
 // Add CORS middleware before your MCP routes
 app.use(cors({
@@ -19,6 +21,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'mcp-session-id'],
 }));
 
+app.use(verifyJWT);
 // Map to store transports by session ID
 const transports: { [sessionId: string]: StreamableHTTPServerTransport } = {};
 
@@ -136,7 +139,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request: any) => {
 });
 
 // Handle POST requests for client-to-server communication
-app.post('/mcp', async (req, res) => {
+app.post('/', async (req, res) => {
   // Check for existing session ID
   console.log('at the server post request')
   console.log('req.body', req.body)
@@ -254,10 +257,10 @@ const handleSessionRequest = async (req: express.Request, res: express.Response)
 };
 
 // Handle GET requests for server-to-client notifications via SSE
-app.get('/mcp', handleSessionRequest);
+app.get('/', handleSessionRequest);
 
 // Handle DELETE requests for session termination
-app.delete('/mcp', handleSessionRequest);
+app.delete('/', handleSessionRequest);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
