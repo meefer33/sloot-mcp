@@ -23,19 +23,15 @@ export function createCallToolHandler() {
   return async (request: any) => {
     const { name, arguments: args } = request.params;
     console.log('at the server call tool request');
-    console.log('currentServerData:', currentServerData);
-    console.log('currentMcpToolData:', currentMcpToolData);
-    console.log('currentMcpToolDataSchema:', currentMcpToolDataSchema);
 
     const toolData = currentMcpToolData.find(
       (item: any) => item.schema.name === name
     );
-    console.log('mcpToolData', currentMcpToolData);
-    console.log('toolName', name);
+console.log('starint tool call', toolData);
     // Handle any tool call
     try {
       const res = await api(args, toolData, currentUser);
-
+console.log('ending tool call');
       return {
         content: [
           {

@@ -64,6 +64,7 @@ app.post('/:serverId', async (req: any, res) => {
     const { data, mcpToolData, mcpToolDataSchema }: any = await getServer(
       req.params.serverId
     );
+    console.log('back from server');
     if (data.error) {
       res.status(401).json({ error: true, message: 'Unauthorized' });
       return;

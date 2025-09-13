@@ -12,8 +12,6 @@ export function setCurrentServerData(data: any, mcpToolDataSchema: any) {
 export function createListToolsHandler() {
   return async () => {
     console.log('at the server list tools request');
-    console.log('currentServerData:', currentServerData);
-    console.log('currentMcpToolDataSchema:', currentMcpToolDataSchema);
 
     // Use the dynamic tools from mcpToolData if available, otherwise use default tools
     const tools = currentMcpToolDataSchema || [

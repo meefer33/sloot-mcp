@@ -56,9 +56,6 @@ export const getServer = async (serverId: any) => {
       (item: any) => item.user_tools.schema
     );
 
-    console.log('mcpToolData', mcpToolData);
-    console.log('mcpToolDataSchema', mcpToolDataSchema);
-
     return { data, mcpToolData, mcpToolDataSchema };
   } catch (error: any) {
     console.error('❌ Unexpected error in getServerData:', error);
