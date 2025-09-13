@@ -47,9 +47,10 @@ const server = new Server(
   {
     capabilities: {
       tools: {},
-      resources: {},
-      prompts: {},
     },
+    debouncedNotificationMethods: [
+      'notifications/tools/list_changed',
+    ]
   }
 );
 
@@ -210,7 +211,7 @@ app.get('/health', (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 3300;
+const PORT = process.env.PORT || 3333;
 
 app.listen(PORT, () => {
   console.log(`🚀 MCP Server running on port ${PORT}`);

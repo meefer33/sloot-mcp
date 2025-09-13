@@ -53,7 +53,7 @@ export function createListToolsHandler() {
         },
       },
     ];
-
+console.log('leaving list tools request');
     return { tools };
   };
 }
