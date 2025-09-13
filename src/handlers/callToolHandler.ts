@@ -27,7 +27,7 @@ export function createCallToolHandler() {
     const toolData = currentMcpToolData.find(
       (item: any) => item.schema.name === name
     );
-console.log('starint tool call', toolData);
+console.log('starint tool call');
     // Handle any tool call
     try {
       const res = await api(args, toolData, currentUser);
