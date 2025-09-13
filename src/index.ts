@@ -166,6 +166,9 @@ app.post('/mcp', async (req, res) => {
         delete transports[transport.sessionId];
       }
     };
+
+    // Connect the server to the transport only once for new sessions
+    await server.connect(transport);
   } else {
     // Invalid request
     res.status(400).json({
@@ -178,9 +181,6 @@ app.post('/mcp', async (req, res) => {
     });
     return;
   }
-
-  // Connect the server to the transport
-  await server.connect(transport);
 
   // Handle the request using the transport's request handler
   try {
