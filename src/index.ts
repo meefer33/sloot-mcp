@@ -37,6 +37,7 @@ const server = new Server({
 
 // Set up server tools
 server.setRequestHandler(ListToolsRequestSchema, async () => {
+  console.log('at the server list tools request')
   return {
     tools: [
       {
@@ -81,7 +82,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 
 server.setRequestHandler(CallToolRequestSchema, async (request: any) => {
   const { name, arguments: args } = request.params;
-
+  console.log('at the server call tool request')
   switch (name) {
     case "echo":
       return {
@@ -199,6 +200,7 @@ app.post('/mcp', async (req, res) => {
 
 // Reusable handler for GET and DELETE requests
 const handleSessionRequest = async (req: express.Request, res: express.Response) => {
+  console.log('at the server handle session request')
   const sessionId = req.headers['mcp-session-id'] as string | undefined;
   if (!sessionId || !transports[sessionId]) {
     res.status(400).send('Invalid or missing session ID');
