@@ -142,6 +142,7 @@ app.post('/mcp', async (req, res) => {
 
   if (sessionId && transports[sessionId]) {
     // Reuse existing transport
+    console.log('reuse existing transport')
     transport = transports[sessionId];
   } else if (!sessionId && req.body.method === 'initialize') {
     // New initialization request
@@ -203,11 +204,13 @@ const handleSessionRequest = async (req: express.Request, res: express.Response)
   console.log('at the server handle session request')
   const sessionId = req.headers['mcp-session-id'] as string | undefined;
   if (!sessionId || !transports[sessionId]) {
+    console.log('invalid or missing session ID')
     res.status(400).send('Invalid or missing session ID');
     return;
   }
   
   const transport = transports[sessionId];
+  console.log('transport', transport)
   try {
     await transport.handleRequest(req, res);
   } catch (error) {
