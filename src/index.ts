@@ -20,6 +20,7 @@ app.use(cors({
 }));
 
 // Map to store transports by session ID
+
 const transports: { [sessionId: string]: StreamableHTTPServerTransport } = {};
 
 // Create MCP server instance
@@ -134,6 +135,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request: any) => {
 // Handle POST requests for client-to-server communication
 app.post('/mcp', async (req, res) => {
   // Check for existing session ID
+  console.log('at the server post request')
   const sessionId = req.headers['mcp-session-id'] as string | undefined;
   let transport: StreamableHTTPServerTransport;
 
