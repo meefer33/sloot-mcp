@@ -7,7 +7,7 @@ import {
   ListToolsRequestSchema
 } from '@modelcontextprotocol/sdk/types.js';
 import cors from 'cors';
-import verifyJWT from './jwtAuth';
+import verifyJWT from './jwtAuth.js';
 
 const app = express();
 app.use(express.json());
