@@ -20,8 +20,10 @@ app.use(cors({
 }));
 
 // Map to store transports by session ID
-
 const transports: { [sessionId: string]: StreamableHTTPServerTransport } = {};
+
+// Map to store pending initializations to avoid duplicate sessions
+const pendingInitializations = new Set<string>();
 
 // Create MCP server instance
 const server = new Server({
@@ -146,7 +148,34 @@ app.post('/mcp', async (req, res) => {
     console.log('reuse existing transport')
     transport = transports[sessionId];
   } else if (!sessionId && req.body.method === 'initialize') {
-    // New initialization request
+    // New initialization request - check if we already have a pending one
+    const clientId = req.ip || 'unknown';
+    
+    if (pendingInitializations.has(clientId)) {
+      console.log('Initialization already in progress for client:', clientId);
+      // Return a temporary response while initialization is in progress
+      res.status(202).json({
+        jsonrpc: '2.0',
+        result: {
+          protocolVersion: '2025-06-18',
+          capabilities: {
+            tools: {},
+            resources: {},
+            prompts: {}
+          },
+          serverInfo: {
+            name: 'sloot-mcp-server',
+            version: '1.0.0'
+          }
+        },
+        id: req.body.id
+      });
+      return;
+    }
+
+    // Mark this client as initializing
+    pendingInitializations.add(clientId);
+    
     const newSessionId = randomUUID();
     transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: () => newSessionId,
@@ -154,6 +183,8 @@ app.post('/mcp', async (req, res) => {
         // Store the transport by session ID
         transports[sessionId] = transport;
         console.log(`New MCP session initialized: ${sessionId}`);
+        // Remove from pending initializations
+        pendingInitializations.delete(clientId);
       },
       // DNS rebinding protection is disabled by default for backwards compatibility. If you are running this server
       // locally, make sure to set:
@@ -167,9 +198,11 @@ app.post('/mcp', async (req, res) => {
         console.log(`MCP session closed: ${transport.sessionId}`);
         delete transports[transport.sessionId];
       }
+      // Remove from pending initializations
+      pendingInitializations.delete(clientId);
     };
 
-    // Connect the server to the transport only once for new sessions
+    // Connect the server to the transport
     await server.connect(transport);
   } else {
     // Invalid request
