@@ -1,11 +1,11 @@
 // Global variables to store server data for current request
 let currentServerData: any = null;
-let currentMcpToolData: any = null;
+let currentMcpToolDataSchema: any = null;
 
 // Function to set the current server data
-export function setCurrentServerData(data: any, mcpToolData: any) {
+export function setCurrentServerData(data: any, mcpToolDataSchema: any) {
   currentServerData = data;
-  currentMcpToolData = mcpToolData;
+  currentMcpToolDataSchema =  mcpToolDataSchema;
 }
 
 // ListToolsRequestSchema handler
@@ -13,10 +13,10 @@ export function createListToolsHandler() {
   return async () => {
     console.log('at the server list tools request');
     console.log('currentServerData:', currentServerData);
-    console.log('currentMcpToolData:', currentMcpToolData);
+    console.log('currentMcpToolDataSchema:', currentMcpToolDataSchema);
 
     // Use the dynamic tools from mcpToolData if available, otherwise use default tools
-    const tools = currentMcpToolData || [
+    const tools = currentMcpToolDataSchema || [
       {
         name: 'echo',
         description: 'Echo back the input message',

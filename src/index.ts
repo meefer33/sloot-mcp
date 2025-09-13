@@ -70,7 +70,7 @@ app.post('/:serverId', async (req: any, res) => {
     }
 
     // Set server data for use in MCP handlers
-    setListToolsData(data, mcpToolData);
+    setListToolsData(data, mcpToolDataSchema);
     setCallToolData(data, mcpToolData, mcpToolDataSchema, req.user);
   } catch (error) {
     console.error('Error getting server data:', error);
