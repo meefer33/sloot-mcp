@@ -18,11 +18,11 @@ export async function api(data: any, toolData: any, user: any) {
             'Content-Type': 'application/json',
           },
           data: { toolId: toolData.id, payload: data },
-          timeout: 30000, // 30 second timeout
-          maxRedirects: 5,
-          validateStatus: (status) => status < 500, // Don't throw on 4xx errors
+         // timeout: 30000, // 30 second timeout
+         // maxRedirects: 5,
+         // validateStatus: (status) => status < 500, // Don't throw on 4xx errors
         });
-        console.log('back from tool', JSON.stringify(response));
+        console.log('back from tool', response);
         return response.data
       } catch (error: any) {
         console.error(`Error in image generation: ${error.message}`);
