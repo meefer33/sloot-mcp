@@ -2,9 +2,9 @@ import axios from 'axios';
 
 export async function api(data: any, toolData: any, user: any) {
   try {
-   // console.log('data api', JSON.stringify(data));
-   // console.log('toolData api', toolData);
-   // console.log('user api', user);
+    console.log('data api', JSON.stringify(data));
+    console.log('toolData api', toolData);
+    console.log('user api', user);
 
       // Initial API call to start image generation
       try {
