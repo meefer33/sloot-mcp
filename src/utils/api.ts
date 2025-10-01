@@ -6,34 +6,6 @@ export async function api(data: any, toolData: any, user: any) {
     console.log('toolData api', toolData);
     console.log('user api', user);
 
-    /*
-    old call to /tools/execute if headers got to large for the api call
-      const response = await axios({
-        method: 'POST',
-        url: 'http://slootapi:3001/tools/execute', // Internal container communication
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-          'Content-Type': 'application/json',
-        },
-        data: { toolId: toolData.id, payload: data },
-        // timeout: 30000, // 30 second timeout
-        // maxRedirects: 5,
-        // validateStatus: (status) => status < 500, // Don't throw on 4xx errors
-      });
-    */
-
-    const tool = {
-      id: toolData.id,
-      schema: toolData.schema,
-      user_id: user.id,
-      is_pipedream: toolData.is_pipedream,
-      pipedream: toolData.pipedream,
-      is_sloot: toolData.is_sloot,
-      sloot: toolData.sloot,
-      user_connect_api: toolData.user_connect_api,
-    };
-
-
     // Initial API call to start image generation
     try {
       // Use internal container communication since both containers are on same network
@@ -45,7 +17,7 @@ export async function api(data: any, toolData: any, user: any) {
           Authorization: `Bearer ${user.token}`,
           'Content-Type': 'application/json',
         },
-        data: { tool: tool, payload: data },
+        data: { toolId: toolData.id, payload: data },
         // timeout: 30000, // 30 second timeout
         // maxRedirects: 5,
         // validateStatus: (status) => status < 500, // Don't throw on 4xx errors
