@@ -83,6 +83,24 @@ app.get('/.well-known/oauth-authorization-server', (req, res) => {
   });
 });
 
+// OAuth metadata discovery for MCP server URLs
+app.get('/mcp/:serverId/.well-known/oauth-authorization-server', (req, res) => {
+  const baseUrl = `${req.protocol}://${req.get('host')}`;
+
+  res.json({
+    issuer: baseUrl,
+    authorization_endpoint: `${baseUrl}/authorize`,
+    token_endpoint: `${baseUrl}/token`,
+    registration_endpoint: `${baseUrl}/register`,
+    response_types_supported: ['code'],
+    grant_types_supported: ['authorization_code', 'client_credentials'],
+    code_challenge_methods_supported: ['S256'],
+    token_endpoint_auth_methods_supported: ['none', 'client_secret_basic'],
+    scopes_supported: ['mcp_tools'],
+    mcp_protocol_version: '2025-03-26',
+  });
+});
+
 // OAuth 2.0 Dynamic Client Registration (RFC7591)
 app.post('/register', (req, res) => {
   const { client_name, redirect_uris, grant_types, response_types } = req.body;
@@ -327,6 +345,31 @@ app.post('/oauth/callback', async (req, res) => {
       error_description: 'Invalid authorization code',
     });
   }
+});
+
+// OAuth metadata discovery for MCP endpoint
+app.get('/mcp/:serverId', (req, res) => {
+  const baseUrl = `${req.protocol}://${req.get('host')}`;
+
+  res.json({
+    oauth: {
+      authorization_endpoint: `${baseUrl}/authorize`,
+      token_endpoint: `${baseUrl}/token`,
+      registration_endpoint: `${baseUrl}/register`,
+      response_types_supported: ['code'],
+      grant_types_supported: ['authorization_code', 'client_credentials'],
+      code_challenge_methods_supported: ['S256'],
+      token_endpoint_auth_methods_supported: ['none', 'client_secret_basic'],
+      scopes_supported: ['mcp_tools'],
+    },
+    mcp: {
+      protocol_version: '2025-03-26',
+      server_info: {
+        name: 'sloot-mcp-server',
+        version: '1.0.0',
+      },
+    },
+  });
 });
 
 // OAuth-protected MCP endpoint
