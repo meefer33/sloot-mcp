@@ -1,17 +1,26 @@
 import { createClient } from '@supabase/supabase-js';
 
-export const getServer = async (serverId: any) => {
+export const getServer = async (serverId: any, userToken?: string) => {
   let mcpToolData: any = null;
   let mcpToolDataSchema: any = null;
 
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    // Use user token if provided, otherwise use service role key
+    const supabase = userToken
+      ? createClient(process.env.SUPABASE_URL!, userToken)
+      : createClient(
+          process.env.SUPABASE_URL!,
+          process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
+
+    console.log(
+      '🔍 Querying server data for serverId:',
+      serverId,
+      userToken ? 'with user token' : 'with service role'
     );
 
-    console.log('🔍 Querying server data for serverId:', serverId);
-    const { data, error } = await supabase
+    // If using user token, we need to verify the user has access to this server
+    let query = supabase
       .from('user_mcp_servers')
       .select(
         `id,
@@ -24,11 +33,28 @@ export const getServer = async (serverId: any) => {
                 )
               `
       )
-      .eq('id', serverId)
-      .single();
+      .eq('id', serverId);
+
+    // If using user token, add user verification
+    if (userToken) {
+      // First get the current user to verify the token
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+      if (userError || !user) {
+        console.error('Invalid user token:', userError);
+        return { error: true, message: 'Invalid user token' };
+      }
+
+      // Add user_id filter to ensure user can only access their own servers
+      query = query.eq('user_id', user.id);
+    }
+
+    const { data, error } = await query.single();
 
     if (error) {
-        console.error('Database query failed', error);
+      console.error('Database query failed', error);
       return {
         error: true,
         message: 'Database query failed',
